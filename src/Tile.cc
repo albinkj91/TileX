@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Tile.h"
 
-void Tile::print() const
-{
-	std::cout << "hello" << std::endl;
-}
+Tile::Tile(float x, float y, float width, float height)
+	:x{x}, y{y}, width{width}, height{height}
+{}

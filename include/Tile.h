@@ -1,7 +1,10 @@
 class Tile
 {
 public:
-	void print() const;
+	Tile(float x, float y, float width, float height);
 private:
-	int test;
+	float x;
+	float y;
+	float width;
+	float height;
 };
