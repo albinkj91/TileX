@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 800), "Isometric projection");
+    sf::RenderWindow window(sf::VideoMode(1200, 800), "Isometric projection");
 
 	sf::Texture texture;
 	if (!texture.loadFromFile("assets/grass.png"))
@@ -14,13 +14,13 @@ int main()
 		cerr << "Error loading image" << endl;
 	}
 
-	float offsetX{800.f/2.f - 32.f};
-	float offsetY{0};
+	float offsetX{1200.f/2.f - 32.f};
+	float offsetY{800.f/2.f - (16 * 15)};
 
 	vector<Tile> tiles{};
-	for(int i{}; i < 5; ++i)
+	for(int i{}; i < 15; ++i)
 	{
-		for(int j{}; j < 5; ++j)
+		for(int j{}; j < 15; ++j)
 		{
 			Tile t{offsetX + 64.f/2*j, offsetY + 32.f/2*j, 64.f, 32.f};
 			t.setTexture(texture);
