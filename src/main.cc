@@ -26,8 +26,8 @@ int main()
 			});
 
 
-	float offsetX{1200.f/2.f - TILE_HEIGHT};
-	float offsetY{800.f/2.f - ((TILE_HEIGHT/2.f) * GRID_WIDTH)};
+	constexpr float offsetX{1200.f/2.f - TILE_HEIGHT};
+	constexpr float offsetY{800.f/2.f - ((TILE_HEIGHT/2.f) * GRID_WIDTH)};
 	Tile tree{offsetX,
 			  offsetY + TILE_HEIGHT/2.f-7,
 			  TILE_WIDTH, TILE_HEIGHT};
@@ -37,23 +37,18 @@ int main()
 	{
 		for(int j{}; j < GRID_WIDTH; ++j)
 		{
-			Tile t{offsetX + TILE_WIDTH/2.f*j,
-				offsetY + TILE_HEIGHT/2.f*j,
+			Tile t{offsetX + TILE_WIDTH/2.f * (j-i),
+				offsetY + TILE_HEIGHT/2.f * (j+i),
 				TILE_WIDTH, TILE_HEIGHT};
 
 			t.setTexture(textures.at(0));
 			t.setPosition(t.vec());
 			tiles.push_back(t);
 		}
-		offsetX -= TILE_WIDTH/2.f;
-		offsetY += TILE_HEIGHT/2.f;
 	}
 
 	tree.setTexture(textures.at(1));
 	tree.setPosition(tree.vec());
-
-	offsetX = 1200.f/2.f - TILE_HEIGHT;
-	offsetY = 800.f/2.f - ((TILE_HEIGHT/2.f) * GRID_WIDTH);
 
     while (window.isOpen())
     {
@@ -61,17 +56,13 @@ int main()
 
 		sf::CircleShape circ(10.f);
 		circ.setFillColor(sf::Color(255, 50, 50));
-		float temp_x{(mouse.x - TILE_WIDTH/2.f - offsetX) / (TILE_WIDTH/2.f)};
-		float temp_y{(mouse.y - TILE_HEIGHT/2.f - offsetY) / (TILE_HEIGHT/2.f)};
-		int x{(int)temp_x};
-		int y{(int)temp_y};
 		
-		cout << "x: " << x << "\ty: " << y << endl;
-
-		if(x >= 0 && x < 15 && y >= 0 && y < 15)
+		float tx{floor((mouse.x - offsetX) / TILE_WIDTH + (mouse.y - offsetY) / TILE_HEIGHT)};
+		float ty{floor((mouse.y - offsetY) * 2.f/TILE_HEIGHT - tx)};
+		if(tx >= 0 && tx < 15 && ty >= 0 && ty < 15)
 		{
-			Tile test{tiles.at(x)}; //TODO
-			circ.setPosition(test.vec().x, test.vec().y);
+			sf::Vector2f pos{tiles.at((ty*GRID_WIDTH) + tx).getPosition()};
+			circ.setPosition(pos.x + TILE_WIDTH/2.f-circ.getRadius(), pos.y);
 		}
 
         sf::Event event;
