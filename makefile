@@ -29,7 +29,7 @@ main: $(OBJECTS) makefile
 $(OBJDIR)/main.o:  $(SRC)/main.cc
 	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/main.cc -o $(OBJDIR)/main.o
 
-$(OBJDIR)/Tile.o: $(SRC)/Tile.cc
+$(OBJDIR)/Tile.o: $(SRC)/Tile.cc $(IDIR)/Tile.h
 	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Tile.cc -o $(OBJDIR)/Tile.o
 
 # 'make clean' removes object files and memory dumps.

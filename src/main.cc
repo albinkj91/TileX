@@ -5,8 +5,10 @@
 #include "Tile.h"
 using namespace std;
 
-#define TILE_WIDTH 64.f
-#define TILE_HEIGHT 32.f
+#define TILE_WIDTH 64
+#define TILE_WIDTH_HALF 32
+#define TILE_HEIGHT 32
+#define TILE_HEIGHT_HALF 16
 #define GRID_WIDTH 15
 
 int main()
@@ -27,18 +29,15 @@ int main()
 
 
 	constexpr float offsetX{1200.f/2.f - TILE_HEIGHT};
-	constexpr float offsetY{800.f/2.f - ((TILE_HEIGHT/2.f) * GRID_WIDTH)};
-	Tile tree{offsetX,
-			  offsetY + TILE_HEIGHT/2.f-7,
-			  TILE_WIDTH, TILE_HEIGHT};
+	constexpr float offsetY{800.f/2.f - (TILE_HEIGHT_HALF * GRID_WIDTH)};
 
 	vector<Tile> tiles{};
 	for(int i{}; i < GRID_WIDTH; ++i)
 	{
 		for(int j{}; j < GRID_WIDTH; ++j)
 		{
-			Tile t{offsetX + TILE_WIDTH/2.f * (j-i),
-				offsetY + TILE_HEIGHT/2.f * (j+i),
+			Tile t{offsetX + TILE_WIDTH_HALF * (j-i),
+				offsetY + TILE_HEIGHT_HALF * (j+i),
 				TILE_WIDTH, TILE_HEIGHT};
 
 			t.setTexture(textures.at(0));
@@ -47,22 +46,34 @@ int main()
 		}
 	}
 
+	Tile tree{0, 0,
+			  TILE_WIDTH, TILE_HEIGHT};
 	tree.setTexture(textures.at(1));
 	tree.setPosition(tree.vec());
 
     while (window.isOpen())
     {
-		sf::Vector2i mouse = sf::Mouse::getPosition(window);
+        window.clear();
 
-		sf::CircleShape circ(10.f);
-		circ.setFillColor(sf::Color(255, 50, 50));
+		for_each(tiles.begin(), tiles.end(),
+				[&window](Tile const& t)
+				{
+					window.draw(t);
+				});
+
+		sf::Vector2i mouse = sf::Mouse::getPosition(window);
 		
-		float tx{floor((mouse.x - offsetX) / TILE_WIDTH + (mouse.y - offsetY) / TILE_HEIGHT)};
-		float ty{floor((mouse.y - offsetY) * 2.f/TILE_HEIGHT - tx)};
-		if(tx >= 0 && tx < 15 && ty >= 0 && ty < 15)
+		float tx{((mouse.x - offsetX) / TILE_WIDTH_HALF + (mouse.y - offsetY) / TILE_HEIGHT_HALF)/2};
+		float ty{(mouse.y - offsetY) / TILE_HEIGHT_HALF - tx};
+		tx = round(tx)-1;
+		ty = round(ty);
+
+		if(tx >= 0 && tx < GRID_WIDTH && ty >= 0 && ty < GRID_WIDTH)
 		{
-			sf::Vector2f pos{tiles.at((ty*GRID_WIDTH) + tx).getPosition()};
-			circ.setPosition(pos.x + TILE_WIDTH/2.f-circ.getRadius(), pos.y);
+			int index{static_cast<int>((ty*GRID_WIDTH) + tx)};
+			sf::Vector2f pos{tiles.at(index).getPosition()};
+			tree.setPosition(pos.x, pos.y - 3*TILE_WIDTH_HALF + 7);
+			window.draw(tree);
 		}
 
         sf::Event event;
@@ -71,15 +82,6 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-
-        window.clear();
-		for_each(tiles.begin(), tiles.end(),
-				[&window](Tile const& t)
-				{
-					window.draw(t);
-				});
-		window.draw(tree);
-		window.draw(circ);
         window.display();
     }
     return 0;
