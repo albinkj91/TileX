@@ -2,6 +2,8 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <memory>
+#include <utility>
 #include "Tile.h"
 using namespace std;
 
@@ -14,6 +16,7 @@ using namespace std;
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1200, 800), "Isometric projection");
+	bool mouse_down{false};
 
 	vector<string> images{"grass.png", "tree.png"};
 	vector<sf::Texture> textures{};
@@ -31,34 +34,34 @@ int main()
 	constexpr float offsetX{1200.f/2.f - TILE_HEIGHT};
 	constexpr float offsetY{800.f/2.f - (TILE_HEIGHT_HALF * GRID_WIDTH)};
 
-	vector<Tile> tiles{};
+	vector<unique_ptr<Tile>> tiles{};
 	for(int i{}; i < GRID_WIDTH; ++i)
 	{
 		for(int j{}; j < GRID_WIDTH; ++j)
 		{
-			Tile t{offsetX + TILE_WIDTH_HALF * (j-i),
+			unique_ptr<Tile> t{new Tile{offsetX + TILE_WIDTH_HALF * (j-i),
 				offsetY + TILE_HEIGHT_HALF * (j+i),
-				TILE_WIDTH, TILE_HEIGHT};
+				TILE_WIDTH, TILE_HEIGHT}};
 
-			t.setTexture(textures.at(0));
-			t.setPosition(t.vec());
-			tiles.push_back(t);
+			t->setTexture(textures.at(0));
+			t->setPosition(t->vec());
+			tiles.push_back(move(t));
 		}
 	}
 
-	Tile tree{0, 0,
-			  TILE_WIDTH, TILE_HEIGHT};
-	tree.setTexture(textures.at(1));
-	tree.setPosition(tree.vec());
+	unique_ptr<Tile> tree{new Tile{0, 0,
+			  TILE_WIDTH, TILE_HEIGHT}};
+	tree->setTexture(textures.at(1));
+	tree->setPosition(tree->vec());
 
     while (window.isOpen())
     {
         window.clear();
 
 		for_each(tiles.begin(), tiles.end(),
-				[&window](Tile const& t)
+				[&window](unique_ptr<Tile> const& t)
 				{
-					window.draw(t);
+					window.draw(*t);
 				});
 
 		sf::Vector2i mouse = sf::Mouse::getPosition(window);
@@ -71,9 +74,23 @@ int main()
 		if(tx >= 0 && tx < GRID_WIDTH && ty >= 0 && ty < GRID_WIDTH)
 		{
 			int index{static_cast<int>((ty*GRID_WIDTH) + tx)};
-			sf::Vector2f pos{tiles.at(index).getPosition()};
-			tree.setPosition(pos.x, pos.y - 3*TILE_WIDTH_HALF + 7);
-			window.draw(tree);
+			sf::Vector2f pos{tiles.at(index)->vec()};
+			tree->setPosition(pos.x, pos.y - 3*TILE_WIDTH_HALF + 7);
+			window.draw(*tree);
+
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && !mouse_down)
+			{
+				unique_ptr<Tile> tree2{new Tile{pos.x, pos.y,
+					TILE_WIDTH, TILE_HEIGHT}};
+				tree2->setPosition(pos.x, pos.y - 3*TILE_WIDTH_HALF + 16);
+				tree2->setTexture(textures.at(1));
+				tiles.at(index) = move(tree2);
+				mouse_down = true;
+			}
+			else if(!sf::Mouse::isButtonPressed(sf::Mouse::Left) &&	mouse_down)
+			{
+				mouse_down = false;
+			}
 		}
 
         sf::Event event;
