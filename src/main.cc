@@ -18,7 +18,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(1200, 800), "Isometric projection");
 	bool mouse_down{false};
 
-	vector<string> images{"grass.png", "tree.png"};
+	vector<string> images{"placeholder.png", "grass.png", "tree.png", "water.png"};
 	vector<sf::Texture> textures{};
 
 	for_each(images.begin(), images.end(),
@@ -41,22 +41,22 @@ int main()
 		{
 			Tile t{offsetX + TILE_WIDTH_HALF * (j-i),
 				offsetY + TILE_HEIGHT_HALF * (j+i),
-				TILE_WIDTH, TILE_HEIGHT};
+				TILE_WIDTH, TILE_HEIGHT,
+				textures.at(0)};
 
-			t.setTexture(textures.at(0));
 			t.setPosition(t.vec());
 			tiles.push_back(move(t));
 		}
 	}
 
 	Tile tree{0, 0,
-			  TILE_WIDTH, TILE_HEIGHT};
-	tree.setTexture(textures.at(1));
+			  TILE_WIDTH, TILE_HEIGHT,
+			  textures.at(3)};
 	tree.setPosition(tree.vec());
 
     while (window.isOpen())
     {
-        window.clear();
+        window.clear(sf::Color{135, 206, 235, 255});
 
 		for_each(tiles.begin(), tiles.end(),
 				[&window](Tile const& t)
@@ -75,15 +75,15 @@ int main()
 		{
 			int index{static_cast<int>((ty*GRID_WIDTH) + tx)};
 			sf::Vector2f pos{tiles.at(index).vec()};
-			tree.setPosition(pos.x, pos.y - 3*TILE_WIDTH_HALF + 7);
+			tree.setPosition(pos.x, pos.y - 7); //- 3*TILE_WIDTH_HALF + 7);
 			window.draw(tree);
 
 			if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && !mouse_down)
 			{
 				Tile tree2{pos.x, pos.y,
-					TILE_WIDTH, TILE_HEIGHT};
-				tree2.setPosition(pos.x, pos.y - 3*TILE_WIDTH_HALF + 16);
-				tree2.setTexture(textures.at(1));
+					TILE_WIDTH, TILE_HEIGHT,
+					textures.at(3)};
+				tree2.setPosition(pos.x, pos.y);// - 3*TILE_WIDTH_HALF + 16);
 				tiles.at(index) = move(tree2);
 				mouse_down = true;
 			}
