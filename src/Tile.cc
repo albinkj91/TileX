@@ -1,15 +1,15 @@
 #include <iostream>
 #include "Tile.h"
 
-Tile::Tile(float const x,
-		float const y,
-		float const width,
-		float const height,
+Tile::Tile(int const x,
+		int const y,
+		int const width,
+		int const height,
 		sf::Texture const& tex)
 	:sf::Sprite{tex}, x{x}, y{y}, width{width}, height{height}
 {}
 
-sf::Vector2f Tile::vec() const
+sf::Vector2i Tile::vec() const
 {
-	return sf::Vector2f{x, y};
+	return sf::Vector2i{x, y};
 }

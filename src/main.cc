@@ -6,8 +6,12 @@
 #include <utility>
 #include "Tile.h"
 #include "ImageLoader.h"
+#include "Grid.h"
+
 using namespace std;
 
+#define WINDOW_WIDTH 1200
+#define WINDOW_HEIGHT 800
 #define TILE_WIDTH 64
 #define TILE_WIDTH_HALF 32
 #define TILE_HEIGHT 32
@@ -16,62 +20,54 @@ using namespace std;
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(1200, 800), "Isometric projection");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Isometric projection");
 
-	constexpr float offsetX{1200.f/2.f - TILE_HEIGHT};
-	constexpr float offsetY{800.f/2.f - (TILE_HEIGHT_HALF * GRID_WIDTH)};
+	constexpr int offset_x{WINDOW_WIDTH/2 - TILE_HEIGHT};
+	constexpr int offset_y{WINDOW_HEIGHT/2 - (TILE_HEIGHT_HALF * GRID_WIDTH)};
 
-	vector<Tile> tiles{};
-	for(int i{}; i < GRID_WIDTH; ++i)
-	{
-		for(int j{}; j < GRID_WIDTH; ++j)
-		{
-			Tile t{offsetX + TILE_WIDTH_HALF * (j-i),
-				offsetY + TILE_HEIGHT_HALF * (j+i),
-				TILE_WIDTH, TILE_HEIGHT,
-				ImageLoader::get("placeholder.png")};
+	Grid grid{offset_x, offset_y, GRID_WIDTH, GRID_WIDTH};
+	grid.create(TILE_WIDTH, TILE_HEIGHT);
 
-			t.setPosition(t.vec());
-			tiles.push_back(move(t));
-		}
-	}
-
-	Tile tree{0, 0,
+	Tile water{0, 0,
 			  TILE_WIDTH, TILE_HEIGHT,
 			  ImageLoader::get("water.png")};
-	tree.setPosition(tree.vec());
+	water.setPosition(water.vec().x, water.vec().y);
 
     while (window.isOpen())
     {
+		// ************************ Draw grid **************************
         window.clear(sf::Color{135, 206, 235, 255});
 
-		for_each(tiles.begin(), tiles.end(),
+		for_each(grid.get_tiles().begin(), grid.get_tiles().end(),
 				[&window](Tile const& t)
 				{
 					window.draw(t);
 				});
+		// ********************************************************
 
+
+
+		// **************** Input handling ************************
 		sf::Vector2i mouse = sf::Mouse::getPosition(window);
 		
-		float tx{((mouse.x - offsetX) / TILE_WIDTH_HALF + (mouse.y - offsetY) / TILE_HEIGHT_HALF)/2};
-		float ty{(mouse.y - offsetY) / TILE_HEIGHT_HALF - tx};
+		float tx{((mouse.x - static_cast<float>(offset_x)) / TILE_WIDTH_HALF + (mouse.y - static_cast<float>(offset_y)) / TILE_HEIGHT_HALF)/2};
+		float ty{(mouse.y - static_cast<float>(offset_y)) / TILE_HEIGHT_HALF - tx};
 		tx = round(tx)-1;
 		ty = round(ty);
 
 		if(tx >= 0 && tx < GRID_WIDTH && ty >= 0 && ty < GRID_WIDTH)
 		{
-			int index{static_cast<int>((ty*GRID_WIDTH) + tx)};
-			sf::Vector2f pos{tiles.at(index).vec()};
-			tree.setPosition(pos.x, pos.y - 7); //- 3*TILE_WIDTH_HALF + 7);
-			window.draw(tree);
+			sf::Vector2i pos{grid.at(tx, ty).vec()};
+			water.setPosition(pos.x, pos.y - 7);
+			window.draw(water);
 
 			if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
 				Tile tree2{pos.x, pos.y,
 					TILE_WIDTH, TILE_HEIGHT,
 					ImageLoader::get("water.png")};
-				tree2.setPosition(pos.x, pos.y);// - 3*TILE_WIDTH_HALF + 16);
-				tiles.at(index) = move(tree2);
+				tree2.setPosition(pos.x, pos.y);
+				grid.at(tx, ty) = tree2;
 			}
 			else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
 			{
@@ -79,10 +75,12 @@ int main()
 					TILE_WIDTH, TILE_HEIGHT,
 					ImageLoader::get("placeholder.png")};
 
-				t.setPosition(t.vec());
-				tiles.at(index) = move(t);
+				t.setPosition(t.vec().x, t.vec().y);
+				grid.at(tx, ty) = t;
 			}
 		}
+
+		//****************************************************
 
         sf::Event event;
         while (window.pollEvent(event))

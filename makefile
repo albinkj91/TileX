@@ -19,7 +19,7 @@ LDFLAGS += -L$(SFML_ROOT)/lib -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-
 MAINFILE := main.cc
 
 # Object modules
-OBJECTS = $(OBJDIR)/main.o $(OBJDIR)/Tile.o $(OBJDIR)/ImageLoader.o
+OBJECTS = $(OBJDIR)/main.o $(OBJDIR)/Tile.o $(OBJDIR)/ImageLoader.o $(OBJDIR)/Grid.o
 
 # Main objetice - created with 'make' or 'make main'.
 main: $(OBJECTS) makefile 
@@ -34,6 +34,9 @@ $(OBJDIR)/Tile.o: $(SRC)/Tile.cc $(IDIR)/Tile.h
 
 $(OBJDIR)/ImageLoader.o: $(SRC)/ImageLoader.cc $(IDIR)/ImageLoader.h
 	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/ImageLoader.cc -o $(OBJDIR)/ImageLoader.o
+
+$(OBJDIR)/Grid.o: $(SRC)/Grid.cc $(IDIR)/Grid.h
+	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Grid.cc -o $(OBJDIR)/Grid.o
 
 # 'make clean' removes object files and memory dumps.
 clean:
