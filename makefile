@@ -11,7 +11,7 @@ OBJDIR := obj
 CCC = g++
 
 # Compiling flags
-CCFLAGS +=  -Wno-deprecated-declarations -Wall -Wextra -pedantic -std=c++1z -Weffc++ -I$(SFML_ROOT)/include
+CCFLAGS +=  -Wno-deprecated-declarations -Wall -Wextra -pedantic -std=c++17 -Weffc++ -I$(SFML_ROOT)/include
 
 LDFLAGS += -L$(SFML_ROOT)/lib -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system
 
@@ -19,7 +19,7 @@ LDFLAGS += -L$(SFML_ROOT)/lib -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-
 MAINFILE := main.cc
 
 # Object modules
-OBJECTS = $(OBJDIR)/main.o $(OBJDIR)/Tile.o
+OBJECTS = $(OBJDIR)/main.o $(OBJDIR)/Tile.o $(OBJDIR)/ImageLoader.o
 
 # Main objetice - created with 'make' or 'make main'.
 main: $(OBJECTS) makefile 
@@ -31,6 +31,9 @@ $(OBJDIR)/main.o:  $(SRC)/main.cc
 
 $(OBJDIR)/Tile.o: $(SRC)/Tile.cc $(IDIR)/Tile.h
 	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Tile.cc -o $(OBJDIR)/Tile.o
+
+$(OBJDIR)/ImageLoader.o: $(SRC)/ImageLoader.cc $(IDIR)/ImageLoader.h
+	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/ImageLoader.cc -o $(OBJDIR)/ImageLoader.o
 
 # 'make clean' removes object files and memory dumps.
 clean:

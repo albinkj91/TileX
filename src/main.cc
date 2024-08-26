@@ -5,6 +5,7 @@
 #include <memory>
 #include <utility>
 #include "Tile.h"
+#include "ImageLoader.h"
 using namespace std;
 
 #define TILE_WIDTH 64
@@ -16,20 +17,6 @@ using namespace std;
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1200, 800), "Isometric projection");
-	bool mouse_down{false};
-
-	vector<string> images{"placeholder.png", "grass.png", "tree.png", "water.png"};
-	vector<sf::Texture> textures{};
-
-	for_each(images.begin(), images.end(),
-			[&textures](string const& s)
-			{
-				sf::Texture t{};
-				if(!t.loadFromFile("assets/" + s))
-					cerr << "Error loading image" << endl;
-				textures.push_back(t);
-			});
-
 
 	constexpr float offsetX{1200.f/2.f - TILE_HEIGHT};
 	constexpr float offsetY{800.f/2.f - (TILE_HEIGHT_HALF * GRID_WIDTH)};
@@ -42,7 +29,7 @@ int main()
 			Tile t{offsetX + TILE_WIDTH_HALF * (j-i),
 				offsetY + TILE_HEIGHT_HALF * (j+i),
 				TILE_WIDTH, TILE_HEIGHT,
-				textures.at(0)};
+				ImageLoader::get("placeholder.png")};
 
 			t.setPosition(t.vec());
 			tiles.push_back(move(t));
@@ -51,7 +38,7 @@ int main()
 
 	Tile tree{0, 0,
 			  TILE_WIDTH, TILE_HEIGHT,
-			  textures.at(3)};
+			  ImageLoader::get("water.png")};
 	tree.setPosition(tree.vec());
 
     while (window.isOpen())
@@ -78,18 +65,22 @@ int main()
 			tree.setPosition(pos.x, pos.y - 7); //- 3*TILE_WIDTH_HALF + 7);
 			window.draw(tree);
 
-			if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && !mouse_down)
+			if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
 				Tile tree2{pos.x, pos.y,
 					TILE_WIDTH, TILE_HEIGHT,
-					textures.at(3)};
+					ImageLoader::get("water.png")};
 				tree2.setPosition(pos.x, pos.y);// - 3*TILE_WIDTH_HALF + 16);
 				tiles.at(index) = move(tree2);
-				mouse_down = true;
 			}
-			else if(!sf::Mouse::isButtonPressed(sf::Mouse::Left) &&	mouse_down)
+			else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
 			{
-				mouse_down = false;
+				Tile t{pos.x, pos.y,
+					TILE_WIDTH, TILE_HEIGHT,
+					ImageLoader::get("placeholder.png")};
+
+				t.setPosition(t.vec());
+				tiles.at(index) = move(t);
 			}
 		}
 
