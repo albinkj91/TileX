@@ -15,6 +15,8 @@ public:
 	void create(int const tile_width, int const tile_height);
 	Tile& at(int const x, int const y);
 	std::vector<Tile>& get_tiles();
+	int get_offset_x() const;
+	int get_offset_y() const;
 private:
 	int offset_x;
 	int offset_y;

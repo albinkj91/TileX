@@ -38,3 +38,13 @@ std::vector<Tile>& Grid::get_tiles()
 {
 	return tiles;
 }
+
+int Grid::get_offset_x() const
+{
+	return offset_x;
+}
+
+int Grid::get_offset_y() const
+{
+	return offset_y;
+}
