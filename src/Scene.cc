@@ -2,6 +2,7 @@
 #include "Grid.h"
 #include "ImageLoader.h"
 #include <cmath>
+#include <iostream>
 
 Scene::Scene(unsigned const w_width, unsigned const w_height)
 	:window{sf::VideoMode{w_width, w_height}, "TileX"}
@@ -34,31 +35,23 @@ void Scene::run()
 	Grid grid{initialize()};
 	std::vector<Tile> types{};
 
-	types.push_back(Tile{0, 0,
-			  TILE_WIDTH, TILE_HEIGHT,
+	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
 			  ImageLoader::get("placeholder.png")});
-	types.push_back(Tile{0, 0,
-			  TILE_WIDTH, TILE_HEIGHT,
+	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
 			  ImageLoader::get("grass.png")});
-	types.push_back(Tile{0, 0,
-			  TILE_WIDTH, TILE_HEIGHT,
+	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
 			  ImageLoader::get("grass2.png")});
-	types.push_back(Tile{0, 0,
-			  TILE_WIDTH, TILE_HEIGHT,
+	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
 			  ImageLoader::get("water.png")});
-	types.push_back(Tile{0, 0,
-			  TILE_WIDTH, TILE_HEIGHT,
+	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
 			  ImageLoader::get("tree.png")});
+
+	Tile current{types.at(keyboard_state)};
 
 	while (this->window.isOpen())
 	{
 		render(grid);
-		// ************************ Draw grid **************************
-		// ********************************************************
 
-
-
-		// **************** Input handling ************************
 		sf::Vector2i mouse = sf::Mouse::getPosition(this->window);
 		
 		float tx{((mouse.x - static_cast<float>(grid.get_offset_x())) / TILE_WIDTH_HALF + (mouse.y - static_cast<float>(grid.get_offset_y())) / TILE_HEIGHT_HALF)/2};
@@ -66,26 +59,40 @@ void Scene::run()
 		tx = round(tx)-1;
 		ty = round(ty);
 
-		Tile current{types.at(keyboard_state)};
 
 		if(tx >= 0 && tx < GRID_WIDTH && ty >= 0 && ty < GRID_WIDTH)
 		{
-			sf::Vector2i pos{grid.at(tx, ty).vec()};
-			current.setPosition(pos.x, pos.y - 7);
+			current = types.at(keyboard_state);
+			sf::Vector2i pos{grid.at(tx, ty).getPosition()};
+			if(keyboard_state == 4)
+				current.setPosition(pos.x, pos.y - 3*TILE_HEIGHT + 9);
+			else
+				current.setPosition(pos.x, pos.y - 7);
 			this->window.draw(current);
 
 			if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
-				current.setPosition(pos.x, pos.y);
+				if(keyboard_state == 4)
+					current.setPosition(pos.x, pos.y - 3*TILE_HEIGHT);
+				else
+					current.setPosition(pos.x, pos.y);
 				grid.at(tx, ty) = current;
 			}
-			//else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
-			//{
-			//	keyboard_state = 0;
-			//}
+			else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
+			{
+				grid.at(tx, ty) = types.at(0);
+				grid.at(tx, ty).setPosition(pos.x, pos.y);
+			}
 		}
 
-		//****************************************************
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+			keyboard_state = 1;
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
+			keyboard_state = 2;
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
+			keyboard_state = 3;
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
+			keyboard_state = 4;
 
         sf::Event event;
         while (this->window.pollEvent(event))
