@@ -1,5 +1,5 @@
 #include "Grid.h"
-#include "ImageLoader.h"
+#include "Image_Loader.h"
 
 Grid::Grid(int const offset_x,
 		int const offset_y,
@@ -19,7 +19,7 @@ void Grid::create(int const tile_width, int const tile_height)
 		for(int j{}; j < width; ++j)
 		{
 			Tile t{tile_width, tile_height,
-				ImageLoader::get("placeholder.png")};
+				Image_Loader::get("placeholder.png")};
 
 			t.setPosition(offset_x + tile_width/2 * (j-i), offset_y + tile_height/2 * (j+i));
 			tiles.push_back(t);

@@ -19,7 +19,7 @@ LDFLAGS += -L$(SFML_ROOT)/lib -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-
 MAINFILE := main.cc
 
 # Object modules
-OBJECTS = $(OBJDIR)/main.o $(OBJDIR)/Tile.o $(OBJDIR)/ImageLoader.o $(OBJDIR)/Grid.o $(OBJDIR)/Scene.o
+OBJECTS = $(OBJDIR)/main.o $(OBJDIR)/Tile.o $(OBJDIR)/Image_Loader.o $(OBJDIR)/Grid.o $(OBJDIR)/Scene.o $(OBJDIR)/Large_Tile.o
 
 # Main objetice - created with 'make' or 'make main'.
 main: $(OBJECTS) makefile 
@@ -32,14 +32,17 @@ $(OBJDIR)/main.o:  $(SRC)/main.cc
 $(OBJDIR)/Tile.o: $(SRC)/Tile.cc $(IDIR)/Tile.h
 	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Tile.cc -o $(OBJDIR)/Tile.o
 
-$(OBJDIR)/ImageLoader.o: $(SRC)/ImageLoader.cc $(IDIR)/ImageLoader.h
-	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/ImageLoader.cc -o $(OBJDIR)/ImageLoader.o
+$(OBJDIR)/Image_Loader.o: $(SRC)/Image_Loader.cc $(IDIR)/Image_Loader.h
+	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Image_Loader.cc -o $(OBJDIR)/Image_Loader.o
 
 $(OBJDIR)/Grid.o: $(SRC)/Grid.cc $(IDIR)/Grid.h
 	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Grid.cc -o $(OBJDIR)/Grid.o
 
 $(OBJDIR)/Scene.o: $(SRC)/Scene.cc $(IDIR)/Scene.h
 	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Scene.cc -o $(OBJDIR)/Scene.o
+
+$(OBJDIR)/Large_Tile.o: $(SRC)/Large_Tile.cc $(IDIR)/Large_Tile.h
+	$(CCC) -I$(IDIR) $(CCFLAGS) -c $(SRC)/Large_Tile.cc -o $(OBJDIR)/Large_Tile.o
 
 # 'make clean' removes object files and memory dumps.
 clean:

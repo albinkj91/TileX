@@ -1,6 +1,6 @@
 #include "Scene.h"
 #include "Grid.h"
-#include "ImageLoader.h"
+#include "Image_Loader.h"
 #include <cmath>
 #include <iostream>
 
@@ -36,15 +36,15 @@ void Scene::run()
 	std::vector<Tile> types{};
 
 	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
-			  ImageLoader::get("placeholder.png")});
+			  Image_Loader::get("placeholder.png")});
 	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
-			  ImageLoader::get("grass.png")});
+			  Image_Loader::get("grass.png")});
 	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
-			  ImageLoader::get("grass2.png")});
+			  Image_Loader::get("grass2.png")});
 	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
-			  ImageLoader::get("water.png")});
+			  Image_Loader::get("water.png")});
 	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
-			  ImageLoader::get("tree.png")});
+			  Image_Loader::get("tree.png")});
 
 	Tile current{types.at(keyboard_state)};
 
@@ -59,23 +59,16 @@ void Scene::run()
 		tx = round(tx)-1;
 		ty = round(ty);
 
-
 		if(tx >= 0 && tx < GRID_WIDTH && ty >= 0 && ty < GRID_WIDTH)
 		{
 			current = types.at(keyboard_state);
 			sf::Vector2i pos{grid.at(tx, ty).getPosition()};
-			if(keyboard_state == 4)
-				current.setPosition(pos.x, pos.y - 3*TILE_HEIGHT + 9);
-			else
-				current.setPosition(pos.x, pos.y - 7);
+			current.setPosition(pos.x, pos.y - 7);
 			this->window.draw(current);
 
 			if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
-				if(keyboard_state == 4)
-					current.setPosition(pos.x, pos.y - 3*TILE_HEIGHT);
-				else
-					current.setPosition(pos.x, pos.y);
+				current.setPosition(pos.x, pos.y);
 				grid.at(tx, ty) = current;
 			}
 			else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
