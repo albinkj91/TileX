@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unordered_map>
 #include "Image_Loader.h"
 
 static std::unordered_map<std::string, sf::Texture> images{};

@@ -2,6 +2,7 @@
 #define GRID_H
 
 #include <vector>
+#include <memory>
 #include "Tile.h"
 
 class Grid
@@ -14,7 +15,7 @@ public:
 
 	void create(int const tile_width, int const tile_height);
 	Tile& at(int const x, int const y);
-	std::vector<Tile>& get_tiles();
+	std::vector<std::shared_ptr<Tile>>& get_tiles();
 	int get_offset_x() const;
 	int get_offset_y() const;
 private:
@@ -22,7 +23,7 @@ private:
 	int offset_y;
 	int width;
 	int height;
-	std::vector<Tile> tiles;
+	std::vector<std::shared_ptr<Tile>> tiles;
 };
 
 #endif

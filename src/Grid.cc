@@ -20,8 +20,8 @@ void Grid::create(int const tile_width, int const tile_height)
 		{
 			int x{offset_x + tile_width/2 * (j-i)};
 			int y{offset_y + tile_height/2 * (j+i)};
-			Tile t{x, y, Image_Loader::get("placeholder.png")};
-			t.set_pos(x, y);
+			std::shared_ptr<Tile> t{std::make_shared<Tile>(x, y, Image_Loader::get("placeholder.png"))};
+			t->set_pos(x, y);
 
 			tiles.push_back(t);
 		}
@@ -30,10 +30,10 @@ void Grid::create(int const tile_width, int const tile_height)
 
 Tile& Grid::at(int const x, int const y)
 {
-	return tiles.at(y * width + x);
+	return *tiles.at(y * width + x);
 }
 
-std::vector<Tile>& Grid::get_tiles()
+std::vector<std::shared_ptr<Tile>>& Grid::get_tiles()
 {
 	return tiles;
 }

@@ -7,6 +7,6 @@ Large_Tile::Large_Tile(int const x, int const y, sf::Texture const& tex)
 
 void Large_Tile::set_pos(int const x, int const y)
 {
-	std::cout << "Test" << std::endl;
-	sprite.setPosition(x, y - 3 * 32 + 9);
+	Tile::set_pos(x, y);
+	sprite.setPosition(x, y - 3 * 32 + 16);
 }

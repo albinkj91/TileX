@@ -2,9 +2,7 @@
 #define IMAGE_LOADER_H
 
 #include <SFML/Graphics.hpp>
-#include <unordered_map>
 #include <string>
-#include <memory>
 
 class Image_Loader
 {
