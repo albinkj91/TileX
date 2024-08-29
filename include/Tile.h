@@ -3,15 +3,19 @@
 
 #include <SFML/Graphics.hpp>
 
-class Tile : public sf::Sprite
+class Tile
 {
 public:
-	Tile(int const width,
-		int const height,
-		sf::Texture const& tex);
+	Tile(int const x, int const y, sf::Texture const& tex);
+	virtual ~Tile() = default;
+
+	virtual void set_pos(int const x, int const y);
+	sf::Vector2i get_pos() const;
+	sf::Sprite get_sprite() const;
+protected:
+	sf::Sprite sprite;
 private:
-	int width;
-	int height;
+	sf::Vector2i pos;
 };
 
 #endif

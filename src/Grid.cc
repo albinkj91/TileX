@@ -18,10 +18,11 @@ void Grid::create(int const tile_width, int const tile_height)
 	{
 		for(int j{}; j < width; ++j)
 		{
-			Tile t{tile_width, tile_height,
-				Image_Loader::get("placeholder.png")};
+			int x{offset_x + tile_width/2 * (j-i)};
+			int y{offset_y + tile_height/2 * (j+i)};
+			Tile t{x, y, Image_Loader::get("placeholder.png")};
+			t.set_pos(x, y);
 
-			t.setPosition(offset_x + tile_width/2 * (j-i), offset_y + tile_height/2 * (j+i));
 			tiles.push_back(t);
 		}
 	}

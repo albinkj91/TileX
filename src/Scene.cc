@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Grid.h"
+#include "Large_Tile.h"
 #include "Image_Loader.h"
 #include <cmath>
 #include <iostream>
@@ -24,7 +25,7 @@ void Scene::render(Grid & grid)
 	std::for_each(grid.get_tiles().begin(), grid.get_tiles().end(),
 			[this](Tile const& t)
 			{
-				this->window.draw(t);
+				this->window.draw(t.get_sprite());
 			});
 }
 
@@ -35,16 +36,11 @@ void Scene::run()
 	Grid grid{initialize()};
 	std::vector<Tile> types{};
 
-	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
-			  Image_Loader::get("placeholder.png")});
-	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
-			  Image_Loader::get("grass.png")});
-	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
-			  Image_Loader::get("grass2.png")});
-	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
-			  Image_Loader::get("water.png")});
-	types.push_back(Tile{TILE_WIDTH, TILE_HEIGHT,
-			  Image_Loader::get("tree.png")});
+	types.push_back(Tile{0, 0, Image_Loader::get("placeholder.png")});
+	types.push_back(Tile{0, 0, Image_Loader::get("grass.png")});
+	types.push_back(Tile{0, 0, Image_Loader::get("grass2.png")});
+	types.push_back(Tile{0, 0, Image_Loader::get("water.png")});
+	types.push_back(Large_Tile{0, 0, Image_Loader::get("tree.png")});
 
 	Tile current{types.at(keyboard_state)};
 
@@ -62,19 +58,19 @@ void Scene::run()
 		if(tx >= 0 && tx < GRID_WIDTH && ty >= 0 && ty < GRID_WIDTH)
 		{
 			current = types.at(keyboard_state);
-			sf::Vector2i pos{grid.at(tx, ty).getPosition()};
-			current.setPosition(pos.x, pos.y - 7);
-			this->window.draw(current);
+			sf::Vector2i pos{grid.at(tx, ty).get_pos()};
+			current.set_pos(pos.x, pos.y);
+			this->window.draw(current.get_sprite());
 
 			if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
-				current.setPosition(pos.x, pos.y);
+				current.set_pos(pos.x, pos.y);
 				grid.at(tx, ty) = current;
 			}
 			else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
 			{
 				grid.at(tx, ty) = types.at(0);
-				grid.at(tx, ty).setPosition(pos.x, pos.y);
+				grid.at(tx, ty).set_pos(pos.x, pos.y);
 			}
 		}
 
