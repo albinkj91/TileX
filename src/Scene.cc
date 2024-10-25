@@ -41,6 +41,7 @@ void Scene::run()
 	types.push_back(std::make_shared<Tile>(Tile{0, 0, Image_Loader::get("grass.png")}));
 	types.push_back(std::make_shared<Tile>(Tile{0, 0, Image_Loader::get("grass2.png")}));
 	types.push_back(std::make_shared<Tile>(Tile{0, 0, Image_Loader::get("water.png")}));
+	types.push_back(std::make_shared<Large_Tile>(Large_Tile{0, 0, Image_Loader::get("flower.png")}));
 	types.push_back(std::make_shared<Large_Tile>(Large_Tile{0, 0, Image_Loader::get("tree.png")}));
 
 	std::shared_ptr<Tile> current{types.at(keyboard_state)};
@@ -83,6 +84,8 @@ void Scene::run()
 			keyboard_state = 3;
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
 			keyboard_state = 4;
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5))
+			keyboard_state = 5;
 
         sf::Event event;
         while (this->window.pollEvent(event))
